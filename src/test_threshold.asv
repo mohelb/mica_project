@@ -57,20 +57,24 @@ bh=[-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,-32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
 ah=[1,-1];
 y=filter(bh,ah,y);
 %differentiating filter avec retard de Z^(-2):
-bd=[1,2,-2,-1];
+bd=[1,2,0,-2,-1];
 ad=8*Ts;
 z=filter(bd,ad,y);
 %signal squared:
 z=z.*z;
 %Moving window integration:
-h = ones(1,0.15*Fs)/0.15*Fs;
+h = ones(1,0.15*Fs)*3.5/(10^13);
 z1 = conv(z,h);
-%identification of the R_locs:
-[pks, loc] = findpeaks(z1);
+%removing group delay
+mg=23;
+z1=z1(mg+[1:N]);
 figure;
-plot(z1);
+plot(data(Fs:3*Fs));
 hold on;
-p
+plot(z1(Fs:3*Fs));
+
+
+
 
 
 
