@@ -52,25 +52,57 @@ time_axis = (1:N)/Fs;
 %band_pass filter:
 bb=[1,0,0,0,0,0,-2,0,0,0,0,0,1];
 ab=[1,-2,1];
+[gdb,wb]=grpdelay(bb,ab);
+mb=mean(gdb);
 y=filter(bb,ab, data);
 bh=[-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,-32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
 ah=[1,-1];
 y=filter(bh,ah,y);
+[gd2,w2]=grpdelay(bh,ah);
+mh=mean(gd2);
 %differentiating filter avec retard de Z^(-2):
-bd=[1,2,-2,-1];
+bd=[1,2,0,-2,-1];
 ad=8*Ts;
 z=filter(bd,ad,y);
+[gdd,wd]=grpdelay(bd,ad);
+md=mean(gdd);
 %signal squared:
 z=z.*z;
-%Moving window integration:
+%Moving window integration and normalization:
 h = ones(1,0.15*Fs)/0.15*Fs;
-z1 = conv(z,h);
-%identification of the R_locs:
-[pks, loc] = findpeaks(z1);
+smw = conv(z,h);
+m=abs(max(smw)/max(data));
+smw=smw/m;
+%thrace_hold:
+th=mean(smw);
+for i=1:length(smw)
+    if (smw(i)< th)
+        smw(i)=0;
+    end
+end
+%removing group delay:
+mg=23; %faut qu'il soit un entier réel positive
+smw=smw(mg+[1:N]);
+%find peaks:
+for i=1:length(data)
+    if (smw(i)*data(i) == 0)
+        data(i)=0;
+    end
+end
 figure;
-plot(z1);
+plot(data(1:3*Fs));
 hold on;
-plot();
+plot(smw(1:3*Fs));
+
+
+
+
+    
+
+
+
+
+
 
 
 
