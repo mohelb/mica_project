@@ -9,6 +9,8 @@ addpath(genpath('.'));
 [file,path] = uigetfile('*.mat', 'rt');
 signal = load(fullfile(path, file));
 data = signal.ecg; % Your ecg data
+figure;
+plot(data);
 Fs = signal.Fs; % Sampling frequency
 Ts=1/Fs;
 N = size(data,2); % Data length
@@ -52,26 +54,57 @@ time_axis = (1:N)/Fs;
 %band_pass filter:
 bb=[1,0,0,0,0,0,-2,0,0,0,0,0,1];
 ab=[1,-2,1];
+[gdb,wb]=grpdelay(bb,ab);
+mb=mean(gdb);
 y=filter(bb,ab, data);
 bh=[-1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,32,-32,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1];
 ah=[1,-1];
 y=filter(bh,ah,y);
+[gd2,w2]=grpdelay(bh,ah);
+mh=mean(gd2);
 %differentiating filter avec retard de Z^(-2):
 bd=[1,2,0,-2,-1];
 ad=8*Ts;
 z=filter(bd,ad,y);
+[gdd,wd]=grpdelay(bd,ad);
+md=mean(gdd);
 %signal squared:
 z=z.*z;
-%Moving window integration:
-h = ones(1,0.15*Fs)*3.5/(10^13);
-z1 = conv(z,h);
-%removing group delay
-mg=23;
-z1=z1(mg+[1:N]);
+%Moving window integration and normalization:
+h = ones(1,0.15*Fs)/0.15*Fs;
+smw = conv(z,h);
+m=abs(max(smw)/max(data));
+smw=smw/m;
+%thrace_hold:
+th=mean(smw);
+for i=1:length(smw)
+    if (smw(i)< th)
+        smw(i)=0;
+    end
+end
+%removing group delay:
+mg = 23; 
+smw=smw(mg+[1:N]);
+%find R_peaks:
+[pks_R,locs_R] = R_peaks(data, smw);
 figure;
-plot(data(Fs:3*Fs));
+plot(data);
 hold on;
-plot(z1(Fs:3*Fs));
+plot(locs_R,data(locs_R),'*');
+hold on;
+plot(smw);
+%find R and S peaks
+
+
+
+
+
+
+
+
+    
+
+
 
 
 
