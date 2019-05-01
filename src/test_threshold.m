@@ -9,6 +9,8 @@ addpath(genpath('.'));
 [file,path] = uigetfile('*.mat', 'rt');
 signal = load(fullfile(path, file));
 data = signal.ecg; % Your ecg data
+figure;
+plot(data);
 Fs = signal.Fs; % Sampling frequency
 Ts=1/Fs;
 N = size(data,2); % Data length
@@ -81,18 +83,21 @@ for i=1:length(smw)
     end
 end
 %removing group delay:
-mg=23; %faut qu'il soit un entier réel positive
+mg = 23; 
 smw=smw(mg+[1:N]);
-%find peaks:
-for i=1:length(data)
-    if (smw(i)*data(i) == 0)
-        data(i)=0;
-    end
-end
+%find R_peaks:
+[pks_R,locs_R] = R_peaks(data, smw);
 figure;
-plot(data(1:3*Fs));
+plot(data);
 hold on;
-plot(smw(1:3*Fs));
+plot(locs_R,data(locs_R),'*');
+hold on;
+plot(smw);
+%find R and S peaks
+
+
+
+
 
 
 
