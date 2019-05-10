@@ -47,6 +47,8 @@ time_axis = (1:N)/Fs;
 % ylabel('Magnitude');
 % title('ECG segment characteristic')
 
+
+
 %% Your turn : My new method ! 
 %Pan and tompkins alogrithm
 %band_pass filter:
@@ -68,8 +70,10 @@ z=filter(bd,ad,y);
 md=mean(gdd);
 %signal squared:
 z=z.*z;
+
 %Moving window integration and normalization:
 h = ones(1,0.15*Fs)/0.15*Fs;
+
 smw = conv(z,h);
 m=abs(max(smw)/max(data));
 smw=smw/m;
@@ -80,18 +84,27 @@ for i=1:length(smw)
         smw(i)=0;
     end
 end
-%removing group delay:
-mg = 29; 
-smw=smw(29+[1:N]);
 
+%removing group delay:
+
+mg = 37; 
+smw=smw(37+(1:N-10));
+data = data(1:N-10);
 %find R_peaks:
-[pks_R,locs_R] = R_peaks(data, smw,Fs);
+
+m=abs(mean(smw));
+
+[pks_R,locs_R] = R_peaks(data, smw,Fs,m);
 figure;
 plot(data);
 hold on;
+plot(smw);
+hold on;
 plot(locs_R,data(locs_R),'o');
 hold on;
-plot(smw);
+L = Q_peaks(smw,100);
+
+
 %find Q and S peaks:
 
 
