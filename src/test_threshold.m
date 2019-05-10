@@ -72,9 +72,9 @@ md=mean(gdd);
 z=z.*z;
 
 %Moving window integration and normalization:
-h = ones(1,0.15*Fs)/0.15*Fs;
-
-smw = conv(z,h);
+mwi = ones(1,0.15*Fs)/0.15*Fs;
+mWi=14,5; %on l'a calcul� a partir de wmi;
+smw = conv(z,mwi);
 m=abs(max(smw)/max(data));
 smw=smw/m;
 %thrace_hold:
@@ -106,6 +106,10 @@ L = Q_peaks(smw,100);
 
 
 %find Q and S peaks:
+%[Q_locs, S_locs]=Q_S_peaks(data, R_locs);
+%plot(Q_locs,data(Q_locs),'*')
+%plot(S_locs,data(S_locs),'*');
+
 
 
 
