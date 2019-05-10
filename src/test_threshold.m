@@ -69,8 +69,9 @@ md=mean(gdd);
 %signal squared:
 z=z.*z;
 %Moving window integration and normalization:
-h = ones(1,0.15*Fs)/0.15*Fs;
-smw = conv(z,h);
+mwi = ones(1,0.15*Fs)/0.15*Fs;
+mWi=14,5; %on l'a calculé a partir de wmi;
+smw = conv(z,mwi);
 m=abs(max(smw)/max(data));
 smw=smw/m;
 %thrace_hold:
@@ -81,11 +82,12 @@ for i=1:length(smw)
     end
 end
 %removing group delay:
-mg = 29; 
-smw=smw(29+[1:N]);
-
+mg = 37; 
+smw=smw(37+(1:N-10));
+data=data(1:N-10);
 %find R_peaks:
-[pks_R,locs_R] = R_peaks(data, smw,Fs);
+m=mean(smw);
+[pks_R,locs_R] = R_peaks(m,smw,data,Fs);
 figure;
 plot(data);
 hold on;
@@ -93,6 +95,10 @@ plot(locs_R,data(locs_R),'o');
 hold on;
 plot(smw);
 %find Q and S peaks:
+%[Q_locs, S_locs]=Q_S_peaks(data, R_locs);
+%plot(Q_locs,data(Q_locs),'*')
+%plot(S_locs,data(S_locs),'*');
+
 
 
 
