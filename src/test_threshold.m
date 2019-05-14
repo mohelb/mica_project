@@ -50,8 +50,10 @@ time_axis = (1:N)/Fs;
 
 
 %% Your turn : My new method ! 
-%Pan and tompkins alogrithm
+
+
 %band_pass filter:
+
 bb=[1,0,0,0,0,0,-2,0,0,0,0,0,1];
 ab=[1,-2,1];
 [gdb,wb]=grpdelay(bb,ab);
@@ -62,22 +64,27 @@ ah=[1,-1];
 y=filter(bh,ah,y);
 [gd2,w2]=grpdelay(bh,ah);
 mh=mean(gd2);
-%differentiating filter avec retard de Z^(-2):
+
+%differentiating filter:
 bd=[1,2,0,-2,-1];
 ad=8*Ts;
 z=filter(bd,ad,y);
 [gdd,wd]=grpdelay(bd,ad);
 md=mean(gdd);
-%signal squared:
+
+%the signal is squared:
 z=z.*z;
 
 %Moving window integration and normalization:
 mwi = ones(1,0.15*Fs)/0.15*Fs;
-mWi=14,5; %on l'a calcul� a partir de wmi;
+
+%on le calcule a partir de wmi;
+mWi=14.5; 
 smw = conv(z,mwi);
 m=abs(max(smw)/max(data));
 smw=smw/m;
-%thrace_hold:
+
+%smw threshold:
 th=mean(smw);
 for i=1:length(smw)
     if (smw(i)< th)
@@ -90,27 +97,32 @@ end
 mg = 37; 
 smw=smw(37+(1:N-10));
 data = data(1:N-10);
-%find R_peaks:
 
-m=abs(mean(smw));
+%finding R Q and S peaks:
 
-[pks_R,locs_R] = R_peaks(data, smw,Fs,m);
-figure;
+m=150;
+
+[R_locs,Q_locs,S_locs] = R_Q_S_peaks(data,smw,m);
+
 plot(data);
 hold on;
-plot(smw);
-hold on;
-plot(locs_R,data(locs_R),'o');
-hold on;
-L = Q_peaks(smw,100);
+plot(Q_locs,data(Q_locs),'*');
+plot(S_locs,data(S_locs),'*');
+plot(R_locs,data(R_locs),'o');
 
+%% Automatic identi?cation of cardiac pathologies
 
-%find Q and S peaks:
-%[Q_locs, S_locs]=Q_S_peaks(data, R_locs);
-%plot(Q_locs,data(Q_locs),'*')
-%plot(S_locs,data(S_locs),'*');
+%Spectogram Analysis:
+%spectrogram(data,8);
 
+%Tachycardia/Bradycardia:
+Delta = [];
+for i = 1:length(R_locs)-1
+    Delta(i) = (R_locs(i+1) - R_locs(i));
+end  
+Arrythmia = mean(Delta*Ts);
 
+%Ectopic beat
 
 
 
