@@ -110,7 +110,7 @@ plot(Q_locs,data(Q_locs),'*');
 plot(S_locs,data(S_locs),'*');
 plot(R_locs,data(R_locs),'o');
 
-%% Automatic identi?cation of cardiac pathologies
+%% Automatic identification of cardiac pathologies
 
 %Spectogram Analysis:
 %spectrogram(data,8);
@@ -120,7 +120,7 @@ Delta = [];
 for i = 1:length(R_locs)-1
     Delta(i) = (R_locs(i+1) - R_locs(i));
 end  
-Arrythmia = mean(Delta*Ts);
+Arrythmia = mean(Delta*Ts)
 
 %Ectopic beat
 
