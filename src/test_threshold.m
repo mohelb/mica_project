@@ -109,6 +109,7 @@ hold on;
 plot(Q_locs,data(Q_locs),'*');
 plot(S_locs,data(S_locs),'*');
 plot(R_locs,data(R_locs),'o');
+plot(smw);
 
 %% Automatic identification of cardiac pathologies
 
