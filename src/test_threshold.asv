@@ -61,23 +61,14 @@ m=150;
 
 [A,B,R_locs,Q_locs,S_locs] = R_Q_S_peaks(Fs,data,smw,m);
 
-Q_locs_sec = Q_locs/Fs;
-R_locs_sec = R_locs/Fs;
-S_locs_sec = S_locs/Fs;
-nb = 1;
-term = 4;
-while (Q_locs_sec(nb)<=term)
-    nb= nb+1;
-end
-
-data = data(1:term*Fs);
-plot(time_axis(1:term*Fs),data);
+data = data(Fs:4*Fs);
+plot(time_axis(1:4),data);
 hold on;
-plot(Q_locs_sec(1:nb-1),data(Q_locs(1:nb-1)),'*');
-plot(S_locs_sec(1:nb-1),data(S_locs(1:nb-1)),'*');
-plot(R_locs_sec(1:nb-1),data(R_locs(1:nb-1)),'o');
+plot(Q_locs(1:4)/Fs,data(Q_locs(1:4)),'*');
+% plot(S_locs(1:4),data(S_locs),'*');
+% plot(R_locs(1:4),data(R_locs),'o');
 hold on; 
-plot(time_axis(1:term*Fs),smw(1:term*Fs));
+plot(time_axis(Fs:4*Fs),smw(Fs:4*Fs));
 
 %% Automatic identication of cardiac pathologies
 
