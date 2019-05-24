@@ -1,10 +1,10 @@
-function [Delta,Delta_barre, Arrythmia]= Arrythmia(R_locs,Ts)
+function [Delta,Delta_barre, Arrythmie]= Arrythmia(R_locs_sec)
 
 Delta = [];
-for i = 1:length(R_locs)-1
-    Delta(i) = (R_locs(i+1) - R_locs(i));
+for i = 1:length(R_locs_sec)-1
+    Delta(i) = (R_locs_sec(i+1) - R_locs_sec(i));
 end  
 
 Delta_barre = mean(Delta);
-Arrythmia = Delta_barre*Ts;
+Arrythmie = Delta_barre;
 end

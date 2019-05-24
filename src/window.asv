@@ -1,0 +1,17 @@
+function [index_start, nb_peaks, data_window] = window(data,Fs,window_start,window_end,Q_locs_sec)
+    nb_peaks = 0;
+    % the number of QRS complex between window start and end
+    for i = 1:length(Q_locs_sec)
+        if(Q_locs_sec(i)>= window_start)
+            if(Q_locs_sec(i)<= window_end)
+                nb_peaks = nb_peaks+1;
+            end
+        end
+    end
+    % the time start corresponding to window start
+    index_start=1;
+    while(Q_locs_sec(index_start) <= window_start)
+        index_start = index_start+1;
+    end
+    data_window= data(window_start*Fs:window_end*Fs);
+end
