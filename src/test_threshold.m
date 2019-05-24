@@ -3,7 +3,7 @@
 % This first version will plot the temporal signal, compute its cardiac rythma and display the different P, Q, R, S, T points for a specific segment.  
 
 clear; close all; clc;
-addpath(genpath('.'));
+% addpath(genpath(data = data(1:term*Fs);'.'));
 
 %% Load a signal
 [file,path] = uigetfile('*.mat', 'rt');
@@ -59,25 +59,39 @@ mini_data = data(1:N-10);
 
 m=150;
 
-[A,B,R_locs,Q_locs,S_locs] = R_Q_S_peaks(Fs,data,smw,m);
+[R_locs,Q_locs,S_locs] = R_Q_S_peaks(Fs,data,smw,m);
 
 Q_locs_sec = Q_locs/Fs;
 R_locs_sec = R_locs/Fs;
 S_locs_sec = S_locs/Fs;
-nb = 1;
-term = 4;
-while (Q_locs_sec(nb)<=term)
-    nb= nb+1;
+
+window_start = 4;
+window_end = 10;
+nb_peaks = 0;
+for i = 1:length(Q_locs_sec)
+    if(Q_locs_sec(i)>= window_start)
+        if(Q_locs_sec(i)<= window_end)
+            nb_peaks = nb_peaks+1;
+        end
+    end
+end
+index_start=1;
+while(Q_locs_sec(index_start)<= window_start)
+    index_start=index_start+1;
 end
 
-data = data(1:term*Fs);
-plot(time_axis(1:term*Fs),data);
+
+
+
+data_window= data(window_start*Fs:window_end*Fs);
+plot(time_axis(window_start*Fs:window_end*Fs),data_window);
 hold on;
-plot(Q_locs_sec(1:nb-1),data(Q_locs(1:nb-1)),'*');
-plot(S_locs_sec(1:nb-1),data(S_locs(1:nb-1)),'*');
-plot(R_locs_sec(1:nb-1),data(R_locs(1:nb-1)),'o');
+plot(Q_locs_sec(index_start:index_start+nb_peaks-1),data(Q_locs(index_start:index_start+nb_peaks-1)),'*');
+plot(S_locs_sec(index_start:index_start+nb_peaks-1),data(S_locs(index_start:index_start+nb_peaks-1)),'*');
+plot(R_locs_sec(index_start:index_start+nb_peaks-1),data(R_locs(index_start:index_start+nb_peaks-1)),'o');
 hold on; 
-plot(time_axis(1:term*Fs),smw(1:term*Fs));
+hold on;
+plot(time_axis(window_start*Fs:window_end*Fs),smw(window_start*Fs:window_end*Fs));
 
 %% Automatic identication of cardiac pathologies
 
