@@ -1,5 +1,8 @@
-function [A,B,R_locs,Q_locs,S_locs] = R_Q_S_peaks(Fs,data,smw,m)
+function [A,B,R_locs,Q_locs,S_locs] = R_Q_S_peaks2(Fs,data,smw,m)
+
+% Porte avec 1 si smw(i) > m et 0 sinon.
 l = smw;
+m = mean(smw);
 for i=1:length(smw)
     if (smw(i)<m)
         l(i)=0;
@@ -9,6 +12,7 @@ for i=1:length(smw)
 
 end
 
+% 
 flag = 0;
 L=[];
 for i=1:length(l)
@@ -37,10 +41,29 @@ for i=1:length(A)-1
     
     R = max(data( A(i): B(i) ));
     R_locs(i) = find( data == R ) ;
-    Q = min( data( A(i) : R_locs(i) ) );
-    Q_locs(i) = find( data == Q ) ;
-    S = min( data( R_locs(i) : B(i) ) );
-    S_locs(i) = find( data == S ) ;
+    j = R_locs(i);
+
+    
+    % finding the first minimum before R
+    k=1;
+    min = R;
+    while data(j-k-1)< data(j-k)
+        min = data(j-k-1);
+        k=k+1;
+    end
+    
+    Q_locs(i) = find( data == min ) ;
+    
+    % finding the first minimum after R
+    min = R;
+    k=1;
+     while data(j+k+1)< data(j+k)
+        min = data(j+k+1);
+        k=k+1;
+     end
+    S_locs(i) = find( data == min ) ;
+    
+
 end
 
 end
