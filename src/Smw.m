@@ -1,5 +1,6 @@
-function [smw]= Smw(data, Fs,N)
+function [smw]= Smw(data, Fs)
 Ts = 1/Fs;
+N = length(data);
 
 %band_pass filter:
 bb=[1,0,0,0,0,0,-2,0,0,0,0,0,1];
